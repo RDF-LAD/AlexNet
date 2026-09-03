@@ -13,3 +13,9 @@ The POC.py file allow to test the inference of the model on any saved pictures.
 
 The results of the models are in the results/cifar10 folder. The better overall results are reached for the model trained during 50 epochs without the regularization involving PCA on the RGB channels.
 The saved models are in the models folder.
+
+I try here to take notes on the rational of the CNN architecture :
+- First conv (11*11, stride 4) captures the main features at a medium scale.
+- Sequential small conv allow to add more nonlinearity and capture small local features
+- Max pooling reduce spatial dimension and add robustness to small changes
+- Fully connected layers (!= conv => they don't keep track of the spatial features) combine all features to get prediction.
