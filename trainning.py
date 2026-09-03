@@ -10,28 +10,21 @@ def main():
     # Configuration
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Entraînement en cours sur : {torch.cuda.get_device_name(0) if device.type == 'cuda' else 'CPU'}")
-
-    # Récupération des dataloaders
     trainloader, testloader = get_data_loaders(batch_size=64)
-
-    # Instanciation du modèle et passage sur GPU
     model = AlexNet(num_classes=10).to(device)
 
-    # Fonction de perte et optimisateur
+    # Loss et optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0005)
 
-    # Listes pour stocker l'historique des pertes
     train_losses = []
     test_losses = []
 
-    # Nombre d'époques (tu pourras l'augmenter, ex: 20 ou 50 pour observer l'overfitting)
     num_epochs = 50
 
     print("\n--- Début de l'entraînement ---")
     for epoch in range(num_epochs):
         
-        # --- 1. PHASE D'ENTRAÎNEMENT ---
         model.train()
         running_train_loss = 0.0
         
@@ -49,12 +42,11 @@ def main():
         epoch_train_loss = running_train_loss / len(trainloader)
         train_losses.append(epoch_train_loss)
 
-        # --- 2. PHASE D'ÉVALUATION (TEST) ---
-        model.eval() # Désactive le dropout/batchnorm spécifiques à l'entraînement
+        model.eval() # Désactive le dropout
         running_test_loss = 0.0
         
-        with torch.no_grad(): # Pas besoin de calculer les gradients pour le test (économise la mémoire)
-            for inputs, labels in testloader:
+        with torch.no_grad(): # Pas besoin de calculer les gradients pour le test 
+              for inputs, labels in testloader:
                 inputs, labels = inputs.to(device), labels.to(device)
                 outputs = model(inputs)
                 loss = criterion(outputs, labels)
@@ -63,8 +55,8 @@ def main():
         epoch_test_loss = running_test_loss / len(testloader)
         test_losses.append(epoch_test_loss)
 
-        # Affichage des résultats de l'époque
-        print(f"Époque [{epoch+1}/{num_epochs}] | Train Loss: {epoch_train_loss:.4f} | Test Loss: {epoch_test_loss:.4f}")
+
+        print(f"Epoch [{epoch+1}/{num_epochs}] | Train Loss: {epoch_train_loss:.4f} | Test Loss: {epoch_test_loss:.4f}")
 
     print("Entraînement terminé avec succès !")
 
@@ -73,7 +65,7 @@ def main():
     plt.plot(range(1, num_epochs + 1), train_losses, label='Train Loss', marker='o', color='blue')
     plt.plot(range(1, num_epochs + 1), test_losses, label='Test Loss', marker='o', color='orange')
     plt.title('Évolution de la Loss (Entraînement vs Test)')
-    plt.xlabel('Époques')
+    plt.xlabel('Epochs')
     plt.ylabel('Loss (CrossEntropy)')
     plt.legend()
     plt.grid(True)
@@ -81,7 +73,7 @@ def main():
 
     # À la fin de training.py, après l'entraînement
     torch.save(model.state_dict(), 'alexnet_cifar10.pth')
-    print("Modèle sauvegardé avec succès sous 'alexnet_cifar10.pth'")
+    print("Modèle sauvegardé avec succès.")
 
 if __name__ == '__main__':
     main()

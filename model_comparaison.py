@@ -8,7 +8,6 @@ def evaluate_model(model_path, testloader, device, model_name="Modèle"):
     
     model = AlexNet(num_classes=10).to(device)
     try:
-        # Chargement du checkpoint complet
         checkpoint = torch.load(model_path, map_location=device)
         
         # Gestion du cas où le fichier est un dictionnaire d'entraînement complet
@@ -18,7 +17,6 @@ def evaluate_model(model_path, testloader, device, model_name="Modèle"):
             elif 'state_dict' in checkpoint:
                 state_dict = checkpoint['state_dict']
             else:
-                # Si le dictionnaire contient directement les poids mais sous d'autres clés
                 state_dict = checkpoint
         else:
             state_dict = checkpoint
@@ -58,15 +56,12 @@ def main():
         'Chien', 'Grenouille', 'Cheval', 'Bateau', 'Camion'
     ]
 
-    # 1. Évaluation de ton modèle local
     path_local = r'AlexNet\models\alexnet_cifar10_epochs10.pth'
     labels_ref, preds_local = evaluate_model(path_local, testloader, device, model_name="Mon Modèle Local")
 
-    # 2. Évaluation du modèle externe (téléchargé depuis un dépôt tiers)
     path_external = r'AlexNet\models\EXTERNAL_alexnet_cifar10.pth'
     _, preds_external = evaluate_model(path_external, testloader, device, model_name="Modèle Externe Référence")
 
-    # Affichage des rapports détaillés si les deux modèles ont pu être chargés
     if preds_local is not None and preds_external is not None:
         print("=" * 50)
         print("Rapport détaillé : Mon Modèle Local")

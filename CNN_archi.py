@@ -5,6 +5,7 @@ from torchinfo import summary
 class AlexNet(nn.Module):
     def __init__(self, num_classes=10):
         super(AlexNet, self).__init__()
+        # First 5 convolutional layers
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
             nn.ReLU(inplace=True),
@@ -20,6 +21,7 @@ class AlexNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2),
         )
+        # Fully connected Layers
         self.classifier = nn.Sequential(
             nn.Dropout(p=0.5),
             nn.Linear(256 * 6 * 6, 4096),
@@ -36,5 +38,5 @@ class AlexNet(nn.Module):
         x = self.classifier(x)
         return x
 
-example_model = AlexNet(num_classes=1000)
-summary(example_model,input_size=(1, 3, 224, 224))
+#example_model = AlexNet(num_classes=1000)
+#summary(example_model,input_size=(1, 3, 224, 224))
